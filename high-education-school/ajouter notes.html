@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ajouter une Note</title>
+    <style>
+        /* Style général pour la page */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #3498db;
+    padding: 15px 0;
+}
+
+.nav-container {
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.nav-links li {
+    margin-left: 20px;
+}
+
+.nav-links li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.nav-links li a:hover {
+    text-decoration: underline;
+}
+
+/* Conteneur principal */
+.container {
+    width: 60%;
+    margin: 20px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #333;
+}
+
+input, textarea {
+    margin-bottom: 15px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+textarea {
+    height: 100px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #2980b9;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #3498db;
+}
+
+/* Style du lien de retour */
+.btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #2980b9;
+}
+
+    </style>
+</head>
+<body>
+    <header style="text-align: center; margin-bottom: 20px;">
+       <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+    </header>
+    <nav class="navbar">
+        <div class="nav-container">
+          <h2 class="logo">High-Education School</h2>
+          <ul class="nav-links">
+            <li><a href="prof accueil.html">Accueil</a></li>
+            <li><a href="exercices.html">Exercices</a></li>
+            <li><a href="presence.html">Présence</a></li>
+            <li><a href="comportement.html">Comportement</a></li>
+            <li><a href="notes.html">Notes</a></li>
+            <li><a href="evolution.html">Évolution</a></li>
+          </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Ajouter une Note</h1>
+
+        <form id="form-ajouter-note">
+            <label for="nom">Nom :</label>
+            <input type="text" id="nom" placeholder="Ex : Jean Dupont" required>
+            <label for="matiere">Matière :</label>
+            <input type="text" id="matiere" placeholder="Ex : Mathématiques" required>
+            
+            <label for="note">Note (sur 20) :</label>
+            <input type="number" id="note" min="0" max="20" required>
+            
+            <label for="appreciation">Appréciation :</label>
+            <textarea id="appreciation" placeholder="Ex : Très bon travail" required></textarea>
+
+            <button type="submit">Ajouter la note</button>
+        </form>
+
+        <a href="notes.html" class="btn">⬅️ Retour à la liste des notes</a>
+    </div>
+
+    <script>
+        document.getElementById("form-ajouter-note").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Récupérer les valeurs du formulaire
+            const nom = document.getElementById("nom").value;
+            const matiere = document.getElementById("matiere").value;
+            const note = document.getElementById("note").value;
+            const appreciation = document.getElementById("appreciation").value;
+
+            // Créer un objet note
+            const nouvelleNote = {
+                nom: nom,
+                matiere: matiere,
+                note: parseInt(note),
+                appreciation: appreciation
+            };
+
+            // Ajouter la note dans le localStorage
+            let notes = JSON.parse(localStorage.getItem("notes") || "[]");
+            notes.push(nouvelleNote);
+            localStorage.setItem("notes", JSON.stringify(notes));
+
+            // Réinitialiser le formulaire après l'ajout
+            document.getElementById("form-ajouter-note").reset();
+
+            alert("Note ajoutée avec succès !");
+        });
+    </script>
+</body>
+</html>
+
+
+

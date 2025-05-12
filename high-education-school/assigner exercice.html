@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ajouter un exercice</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      max-width: 600px;
+      margin: 0 auto 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, select, textarea {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    ul {
+      max-width: 600px;
+      margin: 0 auto;
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    .matiere {
+      font-weight: bold;
+      color: #2980b9;
+    }
+    .deadline {
+      color: #e74c3c;
+    }
+  </style>
+</head>
+<body>
+<header style="text-align: center; margin-bottom: 20px;">
+  <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+</header>
+  <h1>Ajouter un exercice</h1>
+
+  <form id="form-exercice">
+    <select id="matiere" required>
+      <option value="">-- Choisir la matière --</option>
+      <option value="Mathématiques">Mathématiques</option>
+      <option value="Français">Français</option>
+      <option value="Sciences">Sciences</option>
+      <option value="Histoire">Histoire</option>
+    </select>
+
+    <textarea id="description" placeholder="Consigne de l'exercice" required></textarea>
+    <input type="date" id="date" required>
+    <button type="submit">Ajouter l'exercice</button>
+  </form>
+
+  <ul id="liste-exercices">
+    <!-- Exercices ajoutés ici -->
+  </ul>
+
+  <script>
+    const form = document.getElementById("form-exercice");
+    const liste = document.getElementById("liste-exercices");
+
+    // Charger depuis localStorage
+    function chargerExercices() {
+      const exercices = JSON.parse(localStorage.getItem("exercices") || "[]");
+      exercices.forEach(afficherExercice);
+    }
+
+    // Sauvegarder les exercices
+    function sauvegarderExercices() {
+      const items = document.querySelectorAll("#liste-exercices li");
+      const data = Array.from(items).map(item => {
+        return {
+          matiere: item.querySelector(".matiere").textContent,
+          description: item.querySelector(".description").textContent,
+          date: item.querySelector(".deadline").textContent.replace("À rendre pour : ", "")
+        };
+      });
+      localStorage.setItem("exercices", JSON.stringify(data));
+    }
+
+    // Ajouter un exercice à la liste
+    function afficherExercice(ex) {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div class="matiere">${ex.matiere}</div>
+        <div class="description">${ex.description}</div>
+        <div class="deadline">À rendre pour : ${ex.date}</div>
+      `;
+      liste.appendChild(li);
+    }
+
+    // Quand le formulaire est soumis
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const ex = {
+        matiere: document.getElementById("matiere").value,
+        description: document.getElementById("description").value.trim(),
+        date: document.getElementById("date").value
+      };
+      afficherExercice(ex);
+      sauvegarderExercices();
+      form.reset();
+    });
+
+    // Initialisation
+    window.addEventListener("DOMContentLoaded", chargerExercices);
+  </script>
+
+</body>
+</html>

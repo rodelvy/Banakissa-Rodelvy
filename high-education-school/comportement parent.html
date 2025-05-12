@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Comportement de mon enfant</title>
+</head>
+<style>
+  
+  body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+}
+
+h2 {
+  color: #333;
+  margin-top: 30px;
+}
+
+.container {
+  background-color: white;
+  padding: 30px;
+  margin-top: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 600px;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  text-align: left;
+}
+
+input, textarea {
+  padding: 10px;
+  width: 100%;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+button {
+  margin-top: 20px;
+  padding: 12px 25px;
+  background-color: #007bff; /* Bleu vif */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button.annuler {
+  background-color: red;
+}
+
+ul {
+  margin-top: 20px;
+  list-style-type: none;
+  padding-left: 0;
+}
+
+li {
+  background-color: #ffffff;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-left: 5px solid #007bff;
+  border-radius: 5px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+
+</style>
+<body>
+<header style="text-align: center; margin-bottom: 20px;">
+  <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+</header>
+
+  <h2>Comportement de mon enfant</h2>
+
+  <label>Entrez votre nom :</label>
+  <input type="text" id="nomParent" placeholder="Nom du parent" />
+  <ul id="listeComportementEleves"></ul>
+
+  <script>
+    document.getElementById("nomParent").addEventListener("input", function () {
+      const nomParent = this.value.trim().toLowerCase();
+      const comportements = JSON.parse(localStorage.getItem("comportements")) || [];
+
+      const liste = document.getElementById("listeComportementEleves");
+      liste.innerHTML = "";
+
+      const resultats = comportements.filter(c => c.parent.toLowerCase() === nomParent);
+
+      if (resultats.length === 0) {
+        liste.innerHTML = "<li>Aucun enfant trouvé pour ce nom.</li>";
+      } else {
+        resultats.forEach(c => {
+          const li = document.createElement("li");
+          li.textContent = `${c.eleve} - ${c.date} : ${c.comportement}`;
+          liste.appendChild(li);
+        });
+      }
+    });
+  </script>
+</body>
+</html>

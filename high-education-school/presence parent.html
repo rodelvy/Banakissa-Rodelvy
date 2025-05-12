@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Présences - Parent</title>
+  <style>
+    body { font-family: Arial; background: #f4f4f9; padding: 20px; }
+    h2 { margin-bottom: 10px; }
+    select { margin-top: 10px; padding: 8px; font-size: 16px; }
+    table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+    td, th { border: 1px solid #ccc; padding: 10px; text-align: center; }
+  </style>
+</head>
+<body>
+  <h2>Consulter les présences de votre enfant</h2>
+
+  <label for="eleveSelect">Sélectionner l'élève :</label>
+  <select id="eleveSelect" onchange="afficherPresences()">
+    <option value="Alice">Alice</option>
+    <option value="Bob">Bob</option>
+    <option value="Charlie">Charlie</option>
+  </select>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Statut</th>
+        <th>Commentaire</th>
+      </tr>
+    </thead>
+    <tbody id="presenceTableBody"></tbody>
+  </table>
+
+  <script>
+    function afficherPresences() {
+      const eleve = document.getElementById("eleveSelect").value;
+      const allData = JSON.parse(localStorage.getItem("presences") || "[]");
+      const tableBody = document.getElementById("presenceTableBody");
+
+      tableBody.innerHTML = "";
+
+      const presences = allData.filter(item => item.eleve === eleve);
+
+      presences.forEach(entry => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${entry.date}</td>
+          <td>${entry.statut}</td>
+          <td>${entry.commentaire || ""}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    window.onload = afficherPresences;
+  </script>
+</body>
+</html>
+
+

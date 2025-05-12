@@ -1,0 +1,107 @@
+<!-- parent_bulletin.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Parent - Bulletin</title>
+  <style>
+    body {
+  background-color: #f4f4f9;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  margin-top: 10px;
+  margin-left: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+h1, h2 {
+  color: #333;
+}
+
+ul {
+  background: white;
+  padding: 10px;
+  border-radius: 5px;
+  list-style-type: none;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+  </style>
+</head>
+<body>
+<header style="text-align: center; margin-bottom: 20px;">
+  <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+</header>
+  <h1>Bulletin de votre enfant</h1>
+
+  <label>Nom de l'enfant :
+    <input type="text" id="nomRecherche" placeholder="Entrez le nom">
+    <button onclick="afficherBulletin()">Voir le bulletin</button>
+  </label>
+
+  <div id="bulletinContainer"></div>
+
+  <script>
+    function afficherBulletin() {
+      const nom = document.getElementById('nomRecherche').value.trim();
+      const notes = JSON.parse(localStorage.getItem('notes')) || [];
+
+      const notesEleve = notes.filter(n => n.eleve.toLowerCase() === nom.toLowerCase());
+
+      if (notesEleve.length === 0) {
+        document.getElementById('bulletinContainer').innerHTML = "<p>Aucune note trouvée.</p>";
+        return;
+      }
+
+      let bulletinHTML = '';
+      const trimestres = [1, 2, 3];
+      let totalGeneral = 0;
+      let countGeneral = 0;
+
+      trimestres.forEach(t => {
+        const notesTrimestre = notesEleve.filter(n => n.trimestre == t);
+        if (notesTrimestre.length > 0) {
+          bulletinHTML += `<h2>Trimestre ${t}</h2><ul>`;
+          let total = 0;
+          notesTrimestre.forEach(note => {
+            total += parseFloat(note.note);
+            totalGeneral += parseFloat(note.note);
+            countGeneral++;
+            bulletinHTML += `<li>${note.matiere} : ${note.note}/20</li>`;
+          });
+          const moyenne = (total / notesTrimestre.length).toFixed(2);
+          bulletinHTML += `</ul><strong>Moyenne Trimestre ${t} : ${moyenne}/20</strong>`;
+        }
+      });
+
+      if (countGeneral > 0) {
+        const moyenneGenerale = (totalGeneral / countGeneral).toFixed(2);
+        bulletinHTML += `<h2 style="margin-top:20px;">🎓 Moyenne générale de l’année : ${moyenneGenerale}/20</h2>`;
+      }
+
+      document.getElementById('bulletinContainer').innerHTML = bulletinHTML;
+    }
+
+  </script>
+</body>
+</html>

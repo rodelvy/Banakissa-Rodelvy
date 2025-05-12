@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Publish Announcements</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      padding: 20px;
+    }
+    input, textarea, select {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .publish-btn {
+      background-color: #28a745;
+      color: white;
+    }
+    .delete-btn {
+      background-color: red;
+      color: white;
+      float: right;
+    }
+    .announcement {
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    .date {
+      font-size: 12px;
+      color: #888;
+    }
+    .category {
+      font-size: 14px;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 5px;
+    }
+    .urgent { background-color: red; color: white; }
+    .event { background-color: #007bff; color: white; }
+    .info { background-color: #ffc107; color: black; }
+  </style>
+</head>
+<body>
+  <h2>Publish an Announcement</h2>
+  <input type="text" id="titleInput" placeholder="Title of announcement" />
+  <textarea id="messageInput" placeholder="Write the message..."></textarea>
+  
+  <select id="categoryInput">
+    <option value="urgent">Urgent</option>
+    <option value="event">Événement</option>
+    <option value="info">Information</option>
+  </select>
+
+  <button class="publish-btn" onclick="publishAnnouncement()">Publish</button>
+
+  <h3 style="margin-top:30px;">Published Announcements</h3>
+  <div id="announcementsContainer"></div>
+
+  <script>
+    function publishAnnouncement() {
+      const title = document.getElementById('titleInput').value.trim();
+      const message = document.getElementById('messageInput').value.trim();
+      const category = document.getElementById('categoryInput').value;
+
+      if (title && message) {
+        let announcements = JSON.parse(localStorage.getItem('announcements') || "[]");
+        announcements.push({ title, message, category, date: new Date().toLocaleString() });
+        localStorage.setItem('announcements', JSON.stringify(announcements));
+        document.getElementById('titleInput').value = "";
+        document.getElementById('messageInput').value = "";
+        loadAnnouncements();
+      } else {
+        alert("Please fill in all fields.");
+      }
+    }
+
+    function loadAnnouncements() {
+      const container = document.getElementById('announcementsContainer');
+      container.innerHTML = "";
+      let announcements = JSON.parse(localStorage.getItem('announcements') || "[]");
+
+      announcements.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'announcement';
+        div.innerHTML = `
+          <div class="category ${item.category}">${item.category.toUpperCase()}</div>
+          <strong>${item.title}</strong>
+          <button class="delete-btn" onclick="deleteAnnouncement(${index})">Delete</button>
+          <p>${item.message}</p>
+          <div class="date">Published on: ${item.date}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function deleteAnnouncement(index) {
+      let announcements = JSON.parse(localStorage.getItem('announcements') || "[]");
+      announcements.splice(index, 1);
+      localStorage.setItem('announcements', JSON.stringify(announcements));
+      loadAnnouncements();
+    }
+
+    window.onload = loadAnnouncements;
+  </script>
+</body>
+</html>
+
+

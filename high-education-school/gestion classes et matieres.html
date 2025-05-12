@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestion des Classes et Matières</title>
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f7fa;
+  margin: 0;
+  padding: 20px;
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
+}
+
+input, select, button {
+  padding: 8px 10px;
+  margin: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #2980b9;
+  box-shadow: 0 0 3px #2980b9;
+}
+
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background-color: #f0f0f0;
+}
+
+span {
+  display: inline-block;
+  margin: 4px 0;
+}
+
+button {
+  margin-left: 5px;
+  font-size: 12px;
+  padding: 4px 6px;
+}
+
+#searchInput {
+  width: 100%;
+  max-width: 400px;
+  display: block;
+  margin: 0 auto 20px auto;
+}
+
+form, .controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+@media screen and (max-width: 600px) {
+  input, select, button {
+    width: 100%;
+  }
+  table, thead, tbody, th, td {
+    font-size: 13px;
+  }
+}
+
+</style>
+</head>
+<body>
+  <header style="text-align: center; margin-bottom: 20px;">
+    <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+  </header>
+  <h1>Gestion des Classes et Matières</h1>
+
+  <div class="form-container">
+    <h2>Ajouter une classe</h2>
+    <input type="text" id="className" placeholder="Nom de la classe"/>
+    <button onclick="addClass()">Ajouter la classe</button>
+
+    <h2>Ajouter une matière</h2>
+    <select id="classSelect">
+      <option value="">-- Choisir une classe --</option>
+    </select>
+    <input type="text" id="subjectName" placeholder="Nom de la matière" />
+    <input type="text" id="teacherName" placeholder="Nom du professeur" />
+    <button onclick="addSubject()">Ajouter matière</button>
+    <input type="text" id="studentName" placeholder="Nom de l'élève" />
+    <button onclick="addStudent()">Ajouter élève</button>
+
+    
+  </div>
+
+  <div class="table-container">
+    <h2>Liste des classes et matières</h2>
+    <input type="text" id="searchInput" placeholder="Rechercher une classe..." oninput="renderTable()" />
+
+    <table>
+      <thead>
+        <tr>
+          <th>Classes</th>
+          <th>Matières/professeurs</th>
+          <th>Élèves</th>
+
+        </tr>
+      </thead>
+      <tbody id="classTableBody">
+        <!-- Dynamique -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    let classes = {};
+
+// === Chargement initial ===
+window.onload = () => {
+  const saved = localStorage.getItem("schoolData");
+  if (saved) {
+    const raw = JSON.parse(saved);
+    for (let className in raw) {
+      if (Array.isArray(raw[className])) {
+        // ancien format
+        classes[className] = {
+          subjects: raw[className],
+          students: []
+        };
+      } else {
+        classes[className] = raw[className];
+      }
+    }
+  }
+  updateClassSelect();
+  renderTable();
+};
+
+// === Sauvegarde ===
+function saveToLocalStorage() {
+  localStorage.setItem("schoolData", JSON.stringify(classes));
+}
+
+// === Ajout classe ===
+function addClass() {
+  const className = document.getElementById("className").value.trim();
+  if (className && !classes[className]) {
+    classes[className] = { subjects: [], students: [] };
+    updateClassSelect();
+    renderTable();
+    saveToLocalStorage();
+    document.getElementById("className").value = "";
+  } else {
+    alert("Classe vide ou déjà existante.");
+  }
+}
+
+// === Mise à jour select ===
+function updateClassSelect() {
+  const select = document.getElementById("classSelect");
+  select.innerHTML = "";
+  for (let className in classes) {
+    const option = document.createElement("option");
+    option.value = className;
+    option.textContent = className;
+    select.appendChild(option);
+  }
+}
+
+// === Ajout matière + prof ===
+function addSubject() {
+  const className = document.getElementById("classSelect").value;
+  const subjectName = document.getElementById("subjectName").value.trim();
+  const teacherName = document.getElementById("teacherName").value.trim();
+
+  if (className && subjectName && teacherName) {
+    const exists = classes[className].subjects.some(item => item.subject === subjectName);
+    if (exists) {
+      alert("Cette matière existe déjà.");
+      return;
+    }
+    classes[className].subjects.push({ subject: subjectName, teacher: teacherName });
+    renderTable();
+    saveToLocalStorage();
+    document.getElementById("subjectName").value = "";
+    document.getElementById("teacherName").value = "";
+  } else {
+    alert("Tous les champs sont obligatoires.");
+  }
+}
+
+// === Ajout élève ===
+function addStudent() {
+  const className = document.getElementById("classSelect").value;
+  const studentName = document.getElementById("studentName").value.trim();
+
+  if (className && studentName) {
+    if (!classes[className].students.includes(studentName)) {
+      classes[className].students.push(studentName);
+      renderTable();
+      saveToLocalStorage();
+      document.getElementById("studentName").value = "";
+    } else {
+      alert("Cet élève existe déjà.");
+    }
+  } else {
+    alert("Veuillez entrer un nom d'élève.");
+  }
+}
+
+// === Affichage tableau ===
+function renderTable() {
+  const tbody = document.getElementById("classTableBody");
+  const searchValue = document.getElementById("searchInput")?.value.toLowerCase() || "";
+  tbody.innerHTML = "";
+
+  for (let className in classes) {
+    if (!className.toLowerCase().includes(searchValue)) continue;
+
+    const row = document.createElement("tr");
+
+    // === Colonne Classe ===
+    const classCell = document.createElement("td");
+    classCell.textContent = className;
+
+    const editClassBtn = document.createElement("button");
+    editClassBtn.textContent = "✏️";
+    editClassBtn.onclick = () => {
+      const newName = prompt("Nouveau nom de classe :", className);
+      if (newName && newName !== className) {
+        if (classes[newName]) {
+          alert("Classe déjà existante.");
+          return;
+        }
+        classes[newName] = classes[className];
+        delete classes[className];
+        updateClassSelect();
+        renderTable();
+        saveToLocalStorage();
+      }
+    };
+
+    const deleteClassBtn = document.createElement("button");
+    deleteClassBtn.textContent = "🗑️";
+    deleteClassBtn.onclick = () => {
+      if (confirm(`Supprimer la classe "${className}" ?`)) {
+        delete classes[className];
+        updateClassSelect();
+        renderTable();
+        saveToLocalStorage();
+      }
+    };
+
+    classCell.appendChild(editClassBtn);
+    classCell.appendChild(deleteClassBtn);
+
+    // === Colonne Matières ===
+    const subjectCell = document.createElement("td");
+    classes[className].subjects.forEach((item, index) => {
+      const { subject, teacher } = item;
+      const span = document.createElement("span");
+      span.textContent = `${subject} : ${teacher}`;
+
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "✏️";
+      editBtn.onclick = () => {
+        const newSubject = prompt("Nom de la matière :", subject);
+        const newTeacher = prompt("Nom du professeur :", teacher);
+        if (newSubject && newTeacher) {
+          if (classes[className].subjects.some((s, i) => s.subject === newSubject && i !== index)) {
+            alert("Cette matière existe déjà.");
+            return;
+          }
+          classes[className].subjects[index] = { subject: newSubject, teacher: newTeacher };
+          renderTable();
+          saveToLocalStorage();
+        }
+      };
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "❌";
+      deleteBtn.onclick = () => {
+        if (confirm(`Supprimer "${subject}" ?`)) {
+          classes[className].subjects.splice(index, 1);
+          renderTable();
+          saveToLocalStorage();
+        }
+      };
+
+      span.appendChild(editBtn);
+      span.appendChild(deleteBtn);
+      subjectCell.appendChild(span);
+      subjectCell.appendChild(document.createElement("br"));
+    });
+
+    // === Colonne Élèves ===
+    const studentCell = document.createElement("td");
+    classes[className].students.forEach((student, idx) => {
+      const span = document.createElement("span");
+      span.textContent = student;
+
+      const editBtn = document.createElement("button");
+      editBtn.textContent = "✏️";
+      editBtn.onclick = () => {
+        const newName = prompt("Nouveau nom pour l'élève :", student);
+        if (newName && newName !== student) {
+          if (classes[className].students.includes(newName)) {
+            alert("Ce nom existe déjà.");
+            return;
+          }
+          classes[className].students[idx] = newName;
+          renderTable();
+          saveToLocalStorage();
+        }
+      };
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.textContent = "❌";
+      deleteBtn.onclick = () => {
+        if (confirm(`Supprimer ${student} ?`)) {
+          classes[className].students.splice(idx, 1);
+          renderTable();
+          saveToLocalStorage();
+        }
+      };
+
+      span.appendChild(editBtn);
+      span.appendChild(deleteBtn);
+      studentCell.appendChild(span);
+      studentCell.appendChild(document.createElement("br"));
+    });
+
+    row.appendChild(classCell);
+    row.appendChild(subjectCell);
+    row.appendChild(studentCell);
+    tbody.appendChild(row);
+  }
+}
+
+  </script>
+</body>
+</html>

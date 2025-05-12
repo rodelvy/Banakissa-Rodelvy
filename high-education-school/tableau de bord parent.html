@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tableau de bord Parent - High-Education-School</title>
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  margin: 0;
+  padding: 20px;
+}
+
+header, footer {
+  text-align: center;
+  padding: 10px;
+  background-color: #4a90e2;
+  color: white;
+}
+
+main {
+  max-width: 800px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+section {
+  margin-bottom: 20px;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul li {
+  background: #e6f0ff;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+  </style>
+</head>
+<body>
+  <header>
+    <img src="images/logo de bord.png" alt="Logo High Education School" style="height: 60px; vertical-align: middle; margin-right: 15px;">
+    <h1 style="display: inline-block; vertical-align: middle;">Tableau de bord - Parent d'élève</h1>
+  </header>
+</body>
+
+  <main>
+    <label for="nomParent">Entrez votre nom :</label>
+    <input type="text" id="nomParent" placeholder="Nom du parent par exemple Dupont" />
+
+    <div id="dashboard" style="display:none;">
+      <section class="eleve-info">
+        <h2>Informations de l'élève</h2>
+        <p><strong>Nom :</strong> <span id="nomEleve"></span></p>
+        <p><strong>Classe :</strong> <span id="classeEleve"></span></p>
+        <p><strong>Présence :</strong> <span id="presenceEleve"></span></p>
+        <p><strong>Comportement :</strong> <span id="comportementEleve"></span></p>
+      </section>
+
+      <section class="cours">
+        <h2>Cours du jour</h2>
+        <ul id="coursList"></ul>
+      </section>
+
+      <section class="devoirs">
+        <h2>Devoirs à faire</h2>
+        <ul id="devoirsList"></ul>
+      </section>
+
+      <section class="notes">
+        <h2>Dernières notes</h2>
+        <ul id="notesList"></ul>
+      </section>
+    </div>
+
+    <p id="messageErreur" style="color:red;"></p>
+  </main>
+
+  <footer>
+    <p>© 2025 High-Education-School</p>
+  </footer>
+<script>
+  const data = [
+  {
+    parent: "Dupont",
+    eleve: "Jean Dupont",
+    classe: "4e A",
+    presence: "Présent",
+    comportement: "Excellent",
+    cours: ["Mathématiques : Fractions", "Français : Lecture", "SVT : Plantes"],
+    devoirs: ["Exercice page 32 en math", "Résumé du texte lu en français"],
+    notes: ["Math : 15/20", "Français : 17/20"]
+  },
+  {
+    parent: "Moreau",
+    eleve: "Léa Moreau",
+    classe: "5e B",
+    presence: "Absent",
+    comportement: "Avertissement",
+    cours: ["Histoire : Révolution", "Anglais : Présent simple"],
+    devoirs: ["Apprendre le vocabulaire", "Faire la carte mentale"],
+    notes: ["Histoire : 13/20", "Anglais : 14/20"]
+  }
+];
+
+document.getElementById("nomParent").addEventListener("input", function () {
+  const nomParent = this.value.trim();
+  const eleveData = data.find((e) => e.parent.toLowerCase() === nomParent.toLowerCase());
+
+  if (eleveData) {
+    document.getElementById("dashboard").style.display = "block";
+    document.getElementById("messageErreur").textContent = "";
+
+    document.getElementById("nomEleve").textContent = eleveData.eleve;
+    document.getElementById("classeEleve").textContent = eleveData.classe;
+    document.getElementById("presenceEleve").textContent = eleveData.presence;
+    document.getElementById("comportementEleve").textContent = eleveData.comportement;
+
+    updateList("coursList", eleveData.cours);
+    updateList("devoirsList", eleveData.devoirs);
+    updateList("notesList", eleveData.notes);
+  } else {
+    document.getElementById("dashboard").style.display = "none";
+    document.getElementById("messageErreur").textContent = "Aucun élève trouvé pour ce nom.";
+  }
+});
+
+function updateList(id, items) {
+  const ul = document.getElementById(id);
+  ul.innerHTML = "";
+  items.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    ul.appendChild(li);
+  });
+}
+
+</script>
+</body>
+</html>
+

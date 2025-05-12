@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Messages - High Education School</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      color: #2c3e50;
+    }
+
+    .message {
+      background-color: white;
+      padding: 15px;
+      margin: 10px auto;
+      max-width: 600px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+
+    .message strong {
+      color: #2980b9;
+    }
+
+    .no-message {
+      text-align: center;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+<header style="text-align: center; margin-bottom: 20px;">
+  <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+</header>
+  <header>
+    <h1>Messages du Professeur</h1>
+  </header>
+
+  <section id="liste-messages">
+    <!-- Les messages seront insérés ici dynamiquement -->
+  </section>
+
+  <script>
+    // Charger les messages du localStorage
+    const messages = JSON.parse(localStorage.getItem("messages") || "[]");
+
+    const liste = document.getElementById("liste-messages");
+
+    if (messages.length === 0) {
+      liste.innerHTML = `<p class="no-message">Aucun message pour le moment.</p>`;
+    } else {
+      messages.forEach(msg => {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message");
+        messageDiv.innerHTML = `
+          <p><strong>📅 ${msg.date} — ${msg.eleve}</strong></p>
+          <p>${msg.contenu}</p>
+        `;
+        liste.appendChild(messageDiv);
+      });
+    }
+  </script>
+
+</body>
+</html>
+

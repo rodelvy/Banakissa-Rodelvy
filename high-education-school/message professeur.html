@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Envoyer un Message - High Education School</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    form {
+      background: white;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    input, textarea, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+<body>
+<header style="text-align: center; margin-bottom: 20px;">
+  <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+</header>
+  <h1>Envoyer un Message aux Parents</h1>
+
+  <form id="form-message">
+    <input type="text" id="eleve" placeholder="Nom de l'élève" required>
+    <input type="date" id="date" required>
+    <textarea id="contenu" placeholder="Contenu du message..." rows="5" required></textarea>
+    <button type="submit">Envoyer le message</button>
+  </form>
+
+  <script>
+    const form = document.getElementById("form-message");
+
+    form.addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const eleve = document.getElementById("eleve").value;
+      const date = document.getElementById("date").value;
+      const contenu = document.getElementById("contenu").value;
+
+      const nouveauMessage = {
+        eleve,
+        date,
+        contenu
+      };
+
+      // Récupérer les messages existants
+      let messages = JSON.parse(localStorage.getItem("messages") || "[]");
+
+      // Ajouter le nouveau message
+      messages.push(nouveauMessage);
+
+      // Sauvegarder
+      localStorage.setItem("messages", JSON.stringify(messages));
+
+      // Reset + message visuel
+      form.reset();
+      alert("Message envoyé avec succès !");
+    });
+  </script>
+
+</body>
+</html>

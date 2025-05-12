@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Exercices à faire</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    ul {
+      max-width: 600px;
+      margin: 0 auto;
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+
+    .matiere {
+      font-weight: bold;
+      color: #2980b9;
+    }
+
+    .deadline {
+      color: #e74c3c;
+    }
+
+    .btn-retour {
+      display: block;
+      width: fit-content;
+      margin: 20px auto;
+      text-decoration: none;
+      padding: 10px 20px;
+      background: #3498db;
+      color: white;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <header style="text-align: center; margin-bottom: 20px;">
+    <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+  </header>
+  <h1>Exercices à faire à la maison</h1>
+
+  <ul id="liste-exercices">
+    <!-- Exercices chargés ici -->
+  </ul>
+
+  <a href="parent.html" class="btn-retour">← Retour à l'accueil</a>
+
+  <script>
+    // Récupération des exercices depuis le localStorage
+    const liste = document.getElementById("liste-exercices");
+    const exercices = JSON.parse(localStorage.getItem("exercices") || "[]");
+
+    exercices.forEach(ex => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div class="matiere">${ex.matiere}</div>
+        <div class="description">${ex.description}</div>
+        <div class="deadline">À rendre pour : ${ex.date}</div>
+      `;
+      liste.appendChild(li);
+    });
+  </script>
+
+</body>
+</html>

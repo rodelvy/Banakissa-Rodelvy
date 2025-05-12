@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gestion parent</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f7f7f7;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    form {
+      background: #fff;
+      padding: 20px;
+      max-width: 500px;
+      margin: 0 auto 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    form input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    form button {
+      background-color: #3498db;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    table {
+      width: 90%;
+      margin: 0 auto;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background-color: #2980b9;
+      color: white;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    .btn-supprimer {
+      background-color: #e74c3c;
+      color: white;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-supprimer:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<header style="text-align: center; margin-bottom: 20px;">
+  <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+</header>
+<body>
+  <h1>Gestion des Parents</h1>
+  <form id="form-parent">
+    <input type="text" id="nom" placeholder="Nom" required />
+    <input type="text" id="prénom" placeholder="Prénom" required />
+    <input type="text" id="nom-et-prénom-de-enfant" placeholder="Nom et Prénom de l'enfant" required />
+    <input type="text" id="classe" placeholder="Classe" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="text" id="téléphone" placeholder="Téléphone" required />
+    <button type="submit">Ajouter Parent</button>
+  </form>
+
+  <table id="liste-parents">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Nom et prénom de l'enfant</th>
+        <th>Classe</th>
+        <th>Email</th>
+        <th>Téléphone</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Les parents ajoutés vont apparaître ici -->
+    </tbody>
+  </table>
+
+  <script>
+    const form = document.getElementById("form-parent");
+    const liste = document.querySelector("#liste-parents tbody");
+
+    function chargerParents() {
+      const parents = JSON.parse(localStorage.getItem("parents") || "[]");
+      parents.forEach(ajouterLigneTableau);
+    }
+
+    function sauvegarderParents() {
+      const lignes = document.querySelectorAll("#liste-parents tbody tr");
+      const parents = Array.from(lignes).map(row => {
+        const cellules = row.querySelectorAll("td");
+        return {
+          nom: cellules[0].textContent,
+          prenom: cellules[1].textContent,
+          enfant: cellules[2].textContent,
+          classe: cellules[3].textContent,
+          email: cellules[4].textContent,
+          telephone: cellules[5].textContent
+        };
+      });
+      localStorage.setItem("parents", JSON.stringify(parents));
+    }
+
+    function ajouterLigneTableau(parent) {
+      const ligne = document.createElement("tr");
+      ligne.innerHTML = `
+        <td>${parent.nom}</td>
+        <td>${parent.prenom}</td>
+        <td>${parent.enfant}</td>
+        <td>${parent.classe}</td>
+        <td>${parent.email}</td>
+        <td>${parent.telephone}</td>
+      `;
+
+      const btnSupprimer = document.createElement("button");
+      btnSupprimer.textContent = "Supprimer";
+      btnSupprimer.classList.add("btn-supprimer");
+      btnSupprimer.onclick = function () {
+        ligne.remove();
+        sauvegarderParents();
+      };
+
+      const celluleActions = document.createElement("td");
+      celluleActions.appendChild(btnSupprimer);
+      ligne.appendChild(celluleActions);
+
+      liste.appendChild(ligne);
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const parent = {
+        nom: document.getElementById("nom").value.trim(),
+        prenom: document.getElementById("prénom").value.trim(),
+        enfant: document.getElementById("nom-et-prénom-de-enfant").value.trim(),
+        classe: document.getElementById("classe").value.trim(),
+        email: document.getElementById("email").value.trim(),
+        telephone: document.getElementById("téléphone").value.trim()
+      };
+
+      ajouterLigneTableau(parent);
+      sauvegarderParents();
+      form.reset();
+    });
+
+    window.addEventListener("DOMContentLoaded", chargerParents);
+  </script>
+</body>
+</html>

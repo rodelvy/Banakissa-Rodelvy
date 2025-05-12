@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Parent - Announcements</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      padding: 20px;
+    }
+    .announcement {
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    .title {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .date {
+      font-size: 12px;
+      color: #888;
+    }
+    .category {
+      font-size: 14px;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 5px;
+    }
+    .urgent { background-color: red; color: white; }
+    .event { background-color: #007bff; color: white; }
+    .info { background-color: #ffc107; color: black; }
+  </style>
+</head>
+<body>
+  <h2>School Announcements</h2>
+  <div id="announcementsContainer"></div>
+
+  <script>
+    function displayAnnouncements() {
+      const container = document.getElementById('announcementsContainer');
+      const announcements = JSON.parse(localStorage.getItem('announcements') || "[]");
+
+      if (announcements.length === 0) {
+        container.innerHTML = "<p>No announcements available.</p>";
+        return;
+      }
+
+      announcements.reverse().forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'announcement';
+        div.innerHTML = `
+          <div class="category ${item.category}">${item.category.toUpperCase()}</div>
+          <div class="title">${item.title}</div>
+          <p>${item.message}</p>
+          <div class="date">Published on: ${item.date}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    window.onload = displayAnnouncements;
+  </script>
+</body>
+</html>

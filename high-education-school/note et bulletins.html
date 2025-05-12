@@ -1,0 +1,149 @@
+<!-- admin_notes.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Notes & Bulletins</title>
+  <style>
+    body {
+  background-color: #f4f4f9;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  margin-top: 10px;
+  margin-left: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+h1, h2 {
+  color: #333;
+}
+
+ul {
+  background: white;
+  padding: 10px;
+  border-radius: 5px;
+  list-style-type: none;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+  </style>
+</head>
+<body>
+<header style="text-align: center; margin-bottom: 20px;">
+  <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+</header>
+
+  <h1>Ajout de notes</h1>
+
+  <form id="noteForm">
+    <label>Nom de l'élève : <input type="text" id="eleve" required></label><br>
+    <label>Matière : <input type="text" id="matiere" required></label><br>
+    <label>Note : <input type="number" id="note" min="0" max="20" required></label><br>
+    <label>Trimestre :
+      <select id="trimestre">
+        <option value="1">1er Trimestre</option>
+        <option value="2">2ème Trimestre</option>
+        <option value="3">3ème Trimestre</option>
+      </select>
+    </label><br>
+    <button type="submit">Ajouter</button>
+  </form>
+
+  <h2>Notes enregistrées</h2>
+  <div id="listeNotes"></div>
+
+  <script>
+    let notes = JSON.parse(localStorage.getItem('notes')) || [];
+let indexEnCours = null; // pour savoir si on est en train de modifier
+
+document.getElementById('noteForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const eleve = document.getElementById('eleve').value.trim();
+  const matiere = document.getElementById('matiere').value.trim();
+  const note = parseFloat(document.getElementById('note').value);
+  const trimestre = document.getElementById('trimestre').value;
+
+  const noteObj = { eleve, matiere, note, trimestre };
+
+  if (indexEnCours !== null) {
+    notes[indexEnCours] = noteObj;
+    indexEnCours = null;
+  } else {
+    notes.push(noteObj);
+  }
+
+  localStorage.setItem('notes', JSON.stringify(notes));
+  this.reset();
+  afficherListe();
+});
+
+function afficherListe() {
+  const listeDiv = document.getElementById('listeNotes');
+  listeDiv.innerHTML = '';
+
+  if (notes.length === 0) {
+    listeDiv.innerHTML = "<p>Aucune note enregistrée.</p>";
+    return;
+  }
+
+  const ul = document.createElement('ul');
+
+  notes.forEach((n, i) => {
+    const li = document.createElement('li');
+    li.innerHTML = `
+      ${n.eleve} - ${n.matiere} : ${n.note}/20 (Trimestre ${n.trimestre})
+      <button onclick="modifierNote(${i})">✏️ Modifier</button>
+      <button onclick="supprimerNote(${i})">🗑️ Supprimer</button>
+    `;
+    ul.appendChild(li);
+  });
+
+  listeDiv.appendChild(ul);
+}
+
+function supprimerNote(index) {
+  if (confirm("Confirmer la suppression de cette note ?")) {
+    notes.splice(index, 1);
+    localStorage.setItem('notes', JSON.stringify(notes));
+    afficherListe();
+  }
+}
+
+function modifierNote(index) {
+  const note = notes[index];
+  document.getElementById('eleve').value = note.eleve;
+  document.getElementById('matiere').value = note.matiere;
+  document.getElementById('note').value = note.note;
+  document.getElementById('trimestre').value = note.trimestre;
+
+  indexEnCours = index;
+}
+
+window.onload = afficherListe;
+
+  </script>
+</body>
+</html>
+
+

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Notes de l'élève</title>
+    <style>
+        /* Style général pour la page */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #3498db;
+    padding: 15px 0;
+}
+
+.nav-container {
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.nav-links li {
+    margin-left: 20px;
+}
+
+.nav-links li a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.nav-links li a:hover {
+    text-decoration: underline;
+}
+
+/* Conteneur principal */
+.container {
+    width: 80%;
+    margin: 20px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+p {
+    text-align: center;
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Table des notes */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+table th {
+    background-color: #3498db;
+    color: white;
+}
+
+table td {
+    background-color: #fafafa;
+}
+
+table tr:nth-child(even) td {
+    background-color: #f1f1f1;
+}
+
+table tr:hover td {
+    background-color: #f5f5f5;
+}
+
+/* Bouton retour */
+.btn {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #2980b9;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #3498db;
+}
+
+    </style>
+</head>
+<body>
+    <header style="text-align: center; margin-bottom: 20px;">
+      <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+    </header>
+    <nav class="navbar">
+        <div class="nav-container">
+          <h2 class="logo">High-Education School</h2>
+          <ul class="nav-links">
+            <li><a href="parent.html">Accueil</a></li>
+            <li><a href="exercices.html">Exercices</a></li>
+            <li><a href="presence parent.html">Présence</a></li>
+            <li><a href="comportement parent.html">Comportement</a></li>
+            <li><a href="notes.html">Notes</a></li>
+            <li><a href="evolution.html">Évolution</a></li>
+          </ul>
+        </div>
+      </nav>
+      
+    <div class="container">
+        <h1>Notes de l'élève</h1>
+        <p>Voici les notes obtenues dans les différentes matières :</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Matière</th>
+                    <th>Note / 20</th>
+                    <th>Appréciation</th>
+                </tr>
+            </thead>
+            <tbody id="notes-body">
+                <!-- Les notes seront insérées ici dynamiquement -->
+            </tbody>
+        </table>
+
+        <a class="btn" href="Login.html">⬅️ Retour à l'accueil</a>
+    </div>
+
+    <script>
+        // Charger les notes depuis le localStorage
+        const notes = JSON.parse(localStorage.getItem("notes") || "[]");
+
+        const tableBody = document.getElementById("notes-body");
+
+        if (notes.length === 0) {
+            tableBody.innerHTML = "<tr><td colspan='3'>Aucune note disponible</td></tr>";
+        } else {
+            notes.forEach(note => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${note.nom}</td>
+                    <td>${note.matiere}</td>
+                    <td>${note.note}</td>
+                    <td>${note.appreciation}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>
+
+

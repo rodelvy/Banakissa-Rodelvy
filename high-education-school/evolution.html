@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Notes par matière - Professeur</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      padding: 20px;
+    }
+    h2 {
+      color: #333;
+    }
+    select, input {
+      padding: 10px;
+      margin: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      margin: 10px 0;
+      cursor: pointer;
+    }
+    canvas {
+      margin-top: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <header style="text-align: center; margin-bottom: 20px;">
+    <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+  </header>
+  
+  <h2>Ajouter une note par matière</h2>
+
+  <select id="eleve">
+    <option value="Alice">Alice</option>
+    <option value="Bob">Bob</option>
+  </select>
+
+  <select id="trimestre">
+    <option value="T1">T1</option>
+    <option value="T2">T2</option>
+    <option value="T3">T3</option>
+  </select>
+
+  <select id="matiere">
+    <option value="Maths">Maths</option>
+    <option value="Français">Français</option>
+    <option value="Anglais">Anglais</option>
+    <option value="Histoire">Histoire</option>
+  </select>
+
+  <input type="number" id="note" min="0" max="20" step="0.1" placeholder="Note /20" />
+  <button onclick="ajouterNote()">Ajouter</button>
+
+  <canvas id="graphique" width="600" height="300"></canvas>
+
+  <script>
+    const ctx = document.getElementById("graphique").getContext("2d");
+    let chart;
+
+    function ajouterNote() {
+      const eleve = document.getElementById("eleve").value;
+      const trimestre = document.getElementById("trimestre").value;
+      const matiere = document.getElementById("matiere").value;
+      const moyenne = parseFloat(document.getElementById("note").value);
+
+      let notes = JSON.parse(localStorage.getItem("notes") || "[]");
+
+      // Supprimer si même élève, trimestre, matière déjà enregistré
+      notes = notes.filter(n => !(n.eleve === eleve && n.trimestre === trimestre && n.matiere === matiere));
+
+      notes.push({ eleve, trimestre, matiere, moyenne });
+      localStorage.setItem("notes", JSON.stringify(notes));
+      alert("Note enregistrée !");
+      afficherGraphique(eleve);
+    }
+
+    function afficherGraphique(eleve) {
+      const notes = JSON.parse(localStorage.getItem("notes") || "[]").filter(n => n.eleve === eleve);
+      
+      // Grouper par matière
+      const matieres = [...new Set(notes.map(n => n.matiere))];
+      const trimestres = ["T1", "T2", "T3"];
+
+      const couleurs = {
+        Maths: "#007bff",
+        Français: "#28a745",
+        Anglais: "#ffc107",
+        Histoire: "#dc3545"
+      };
+
+      const datasets = matieres.map(matiere => {
+        const data = trimestres.map(t => {
+          const note = notes.find(n => n.trimestre === t && n.matiere === matiere);
+          return note ? note.moyenne : null;
+        });
+
+        return {
+          label: matiere,
+          data: data,
+          borderColor: couleurs[matiere] || "#666",
+          backgroundColor: couleurs[matiere] + "33",
+          fill: false,
+          tension: 0.3,
+          pointRadius: 5,
+          pointHoverRadius: 8
+        };
+      });
+
+      if (chart) chart.destroy();
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: trimestres,
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: `Évolution des notes de ${eleve}`,
+              font: { size: 18 }
+            },
+            legend: { position: 'bottom' }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 20,
+              title: { display: true, text: "Note" }
+            },
+            x: {
+              title: { display: true, text: "Trimestres" }
+            }
+          }
+        }
+      });
+    }
+
+    // Affichage initial
+    document.getElementById("eleve").addEventListener("change", (e) => {
+      afficherGraphique(e.target.value);
+    });
+    window.onload = () => afficherGraphique("Alice");
+  </script>
+</body>
+</html>
+
+

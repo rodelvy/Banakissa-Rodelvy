@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Tableau de Bord - Administrateur</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+    header {
+      background-color: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 1.5em 0;
+    }
+    h1 {
+      margin: 0;
+    }
+    .dashboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 2em;
+    }
+    .card {
+      background-color: white;
+      width: 250px;
+      padding: 1.5em;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .card a {
+      display: block;
+      margin-top: 10px;
+      color: #3498db;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Tableau de Bord - Administrateur</h1>
+    <p>Gérez l'ensemble des utilisateurs et données de l'application</p>
+  </header>
+
+  <section class="dashboard">
+    <div class="card">
+      <h3>Gérer les Professeurs</h3>
+      <a href="gestion prof.html">Ajouter / Modifier</a>
+    </div>
+    <div class="card">
+      <h3>Gérer les Parents</h3>
+      <a href="gestion parent.html">Ajouter / Modifier</a>
+    </div>
+    <div class="card">
+      <h3>Gérer les Elèves</h3>
+      <a href="gestion des eleves.html">Inscrire / Supprimer</a>
+    </div>
+    <div class="card">
+      <h3>Classes & Matières</h3>
+      <a href="gestion classes et matieres.html">Organiser</a>
+    </div>
+    <div class="card">
+      <h3>Notes & Bulletins</h3>
+      <a href="note et bulletins.html">Valider / Publier</a>
+    </div>
+    <div class="card">
+      <h3>Messages / Annonces</h3>
+      <a href="annonces.html">Envoyer / Gérer</a>
+    </div>
+  </section>
+</body>
+</html>

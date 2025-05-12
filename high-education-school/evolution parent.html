@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Graphique Notes - Parent</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f4f4f9, #dfe9f3);
+      margin: 0;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 30px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    select {
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+    }
+
+    canvas {
+      margin-top: 30px;
+    }
+
+    .footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <header style="text-align: center; margin-bottom: 20px;">
+    <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+  </header>
+
+  <div class="container">
+    <h2>Évolution des Notes de l'Élève</h2>
+    <select id="eleve">
+      <option value="Alice">Alice</option>
+      <option value="Bob">Bob</option>
+    </select>
+
+    <canvas id="graphique" height="300"></canvas>
+    <div class="footer">Données fournies par les enseignants - visibles par les parents</div>
+  </div>
+
+  <script>
+    const ctx = document.getElementById("graphique").getContext("2d");
+    let chart;
+
+    function afficherGraphique(eleve) {
+      const notes = JSON.parse(localStorage.getItem("notes") || "[]").filter(n => n.eleve === eleve);
+      const matieres = [...new Set(notes.map(n => n.matiere))];
+      const trimestres = ["T1", "T2", "T3"];
+
+      const couleurs = {
+        Maths: "#007bff",
+        Français: "#28a745",
+        Anglais: "#ffc107",
+        Histoire: "#dc3545"
+      };
+
+      const datasets = matieres.map(matiere => {
+        const data = trimestres.map(t => {
+          const note = notes.find(n => n.trimestre === t && n.matiere === matiere);
+          return note ? note.moyenne : null;
+        });
+
+        return {
+          label: matiere,
+          data: data,
+          borderColor: couleurs[matiere] || "#555",
+          backgroundColor: (couleurs[matiere] || "#555") + "33",
+          fill: true,
+          tension: 0.4,
+          pointRadius: 6,
+          pointHoverRadius: 10,
+          borderWidth: 2
+        };
+      });
+
+      if (chart) chart.destroy();
+
+      chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: trimestres,
+          datasets: datasets
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: `Évolution des notes de ${eleve}`,
+              font: { size: 20 }
+            },
+            legend: {
+              position: 'bottom',
+              labels: {
+                boxWidth: 20,
+                color: '#333'
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 20,
+              title: {
+                display: true,
+                text: 'Note sur 20'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Trimestres'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    document.getElementById("eleve").addEventListener("change", e => {
+      afficherGraphique(e.target.value);
+    });
+
+    window.onload = () => afficherGraphique("Alice");
+  </script>
+</body>
+</html>
+
+

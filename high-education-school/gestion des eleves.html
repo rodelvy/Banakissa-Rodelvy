@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des élèves</title>
+    <style>
+        .gestion-eleves {
+  background-color: #ffffff;
+  padding: 2em;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  margin-bottom: 3em;
+}
+
+.gestion-eleves h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 1.5em;
+}
+
+#form-eleve input {
+  padding: 0.7em;
+  margin: 0.5em 0.5em 1em 0;
+  width: calc(25% - 1em);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+#form-eleve button {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  padding: 0.7em 1.5em;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#form-eleve button:hover {
+  background-color: #219150;
+}
+
+#table-eleves {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1em;
+}
+
+#table-eleves th, #table-eleves td {
+  padding: 0.8em;
+  text-align: left;
+  border: 1px solid #ccc;
+}
+
+#table-eleves th {
+  background-color: #3498db;
+  color: white;
+}
+
+#table-eleves td button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.4em 1em;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#table-eleves td button:hover {
+  background-color: #c0392b;
+}
+
+    </style>
+    
+</head>
+<body>
+<header style="text-align: center; margin-bottom: 20px;">
+  <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+</header>
+    <section class="gestion-eleves" style="margin: 2em auto; max-width: 900px;">
+        <h2>👨‍🎓 Gestion des Élèves</h2>
+      
+        <form id="form-eleve" style="margin-bottom: 2em;">
+          <label for="parentEleve">Nom du parent :</label>
+          <input type="text" id="parentEleve" placeholder="Nom du parent" required>
+          <input type="text" id="nom-eleve" placeholder="Nom de l'élève" required>
+          <input type="text" id="prenom-eleve" placeholder="Prénom" required>
+          <input type="text" id="classe-eleve" placeholder="Classe" required>
+          <input type="email" id="email-eleve" placeholder="Email" required>
+          <input type="text" id="telephone-eleve" placeholder="Téléphone" required>
+          <button type="submit">Ajouter Élève</button>
+        </form>
+      
+        <table id="table-eleves" border="1" style="width:100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Classe</th>
+              <th>Email</th>
+              <th>Telephone</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Les élèves ajoutés apparaîtront ici -->
+          </tbody>
+        </table>
+      </section>
+
+      <script>
+          const form = document.getElementById("form-eleve");
+        const tableBody = document.querySelector("#table-eleves tbody");
+
+        // Fonction pour sauvegarder les élèves dans le localStorage
+        function saveToLocalStorage() {
+            const rows = document.querySelectorAll("#table-eleves tbody tr");
+            const students = [];
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll("td");
+                const student = {
+                    nom: cells[0].textContent,
+                    prenom: cells[1].textContent,
+                    classe: cells[2].textContent,
+                    email: cells[3].textContent,
+                    telephone: cells[4].textContent
+                };
+                students.push(student);
+            });
+
+            localStorage.setItem('eleves', JSON.stringify(students));
+        }
+
+        // Fonction pour charger les élèves depuis le localStorage
+        function loadFromLocalStorage() {
+            const students = JSON.parse(localStorage.getItem('eleves')) || [];
+
+            students.forEach(student => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${student.nom}</td>
+                    <td>${student.prenom}</td>
+                    <td>${student.classe}</td>
+                    <td>${student.email}</td>
+                    <td>${student.telephone}</td>
+                    <td>
+                        <button class="modifier-btn" style="background-color: #3498db; color: white; border: none; padding: 0.4em 1em; border-radius: 4px; cursor: pointer;">Modifier</button>
+                        <button class="supprimer-btn" style="background-color: #e74c3c; color: white; border: none; padding: 0.4em 1em; border-radius: 4px; cursor: pointer;">Supprimer</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Charger les élèves au démarrage
+        window.onload = function() {
+            loadFromLocalStorage();
+        };
+
+        // Ajouter un élève
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const nom = document.getElementById("nom-eleve").value.trim();
+            const prenom = document.getElementById("prenom-eleve").value.trim();
+            const classe = document.getElementById("classe-eleve").value.trim();
+            const email = document.getElementById("email-eleve").value.trim();
+            const telephone = document.getElementById("telephone-eleve").value.trim();
+
+            if (!nom || !prenom || !classe || !email || !telephone) {
+                alert("Veuillez remplir tous les champs !");
+                return;
+            }
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td>${nom}</td>
+                <td>${prenom}</td>
+                <td>${classe}</td>
+                <td>${email}</td>
+                <td>${telephone}</td>
+                <td>
+                    <button class="modifier-btn" style="background-color: #3498db; color: white; border: none; padding: 0.4em 1em; border-radius: 4px; cursor: pointer;">Modifier</button>
+                    <button class="supprimer-btn" style="background-color: #e74c3c; color: white; border: none; padding: 0.4em 1em; border-radius: 4px; cursor: pointer;">Supprimer</button>
+                </td>
+            `;
+
+            tableBody.appendChild(row);
+            form.reset();
+            saveToLocalStorage();  // Sauvegarde après ajout
+        });
+
+        // Gestion des actions : modifier et supprimer
+        tableBody.addEventListener("click", function (e) {
+            const bouton = e.target;
+            const ligne = bouton.closest("tr");
+
+            // Suppression
+            if (bouton.classList.contains("supprimer-btn")) {
+                if (confirm("Voulez-vous vraiment supprimer cet élève ?")) {
+                    ligne.remove();
+                    saveToLocalStorage();  // Sauvegarde après suppression
+                }
+            }
+
+            // Modification
+            if (bouton.classList.contains("modifier-btn")) {
+                const cellules = ligne.querySelectorAll("td");
+
+                if (bouton.textContent === "Modifier") {
+                    // Activer les champs en mode édition
+                    for (let i = 0; i < 4; i++) {
+                        const texte = cellules[i].textContent;
+                        cellules[i].innerHTML = `<input type="text" value="${texte}" style="width: 100%; padding: 4px;">`;
+                    }
+                    bouton.textContent = "Enregistrer";
+                    bouton.style.backgroundColor = "#f39c12";
+                } else {
+                    // Enregistrer les nouvelles valeurs
+                    for (let i = 0; i < 4; i++) {
+                        const input = cellules[i].querySelector("input");
+                        cellules[i].textContent = input.value.trim();
+                    }
+                    bouton.textContent = "Modifier";
+                    bouton.style.backgroundColor = "#3498db";
+                    saveToLocalStorage();  // Sauvegarde après modification
+                }
+            }
+        });
+        // Ajouter un élève avec un parent associé
+ajouterEleve.addEventListener('click', () => {
+  const nom = nomEleve.value;
+  const comportement = comportementEleve.value;
+  const parent = document.getElementById('parentEleve').value; // Récupérer le nom du parent
+
+  if (nom && comportement && parent) {
+    // Récupérer la liste des élèves depuis le localStorage
+    const eleves = JSON.parse(localStorage.getItem('eleves')) || [];
+    
+    // Ajouter un nouvel élève avec parent
+    eleves.push({ nom, comportement, parent });
+    
+    // Sauvegarder la nouvelle liste d'élèves dans le localStorage
+    localStorage.setItem('eleves', JSON.stringify(eleves));
+
+    // Ajouter l'élève à la liste dans l'UI
+    const li = document.createElement('li');
+    li.textContent = `${nom} - Comportement: ${comportement} - Parent: ${parent}`;
+    listeEleves.appendChild(li);
+
+    // Vider les champs du formulaire et cacher
+    nomEleve.value = '';
+    comportementEleve.value = '';
+    parentEleve.value = ''; // Réinitialiser le champ parent
+    formulaireEleve.style.display = 'none';
+  } else {
+    alert('Veuillez remplir tous les champs');
+  }
+});
+
+      </script>
+      
+</body>
+</html>

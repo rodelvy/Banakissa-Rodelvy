@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Teacher - Read Message</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      padding: 20px;
+    }
+    h2 {
+      color: #333;
+    }
+    #messageBox {
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 15px;
+      min-height: 100px;
+      font-size: 16px;
+      white-space: pre-wrap;
+    }
+    button {
+      margin-top: 20px;
+      padding: 8px 15px;
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: darkred;
+    }
+  </style>
+</head>
+<body>
+  <header style="text-align: center; margin-bottom: 20px;">
+    <img src="images/logo.png" alt="Logo High Education School" class="logo" style="height: 80px;">
+  </header>
+
+  <h2>Message d'un Parent</h2>
+  <div id="messageBox">en cours de chargement...</div>
+
+  <button onclick="clearMessage()">Supprimer Message</button>
+
+  <script>
+    function loadMessage() {
+      const message = localStorage.getItem('messageToTeacher');
+      const messageBox = document.getElementById('messageBox');
+      if (message) {
+        messageBox.textContent = message;
+      } else {
+        messageBox.textContent = "Aucun message trouvé.";
+      }
+    }
+
+    function clearMessage() {
+      localStorage.removeItem('messageToTeacher');
+      document.getElementById('messageBox').textContent = "Message supprimé.";
+    }
+
+    window.onload = loadMessage;
+  </script>
+</body>
+</html>
+

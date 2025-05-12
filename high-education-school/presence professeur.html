@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Présences - Professeur</title>
+  <style>
+    body { font-family: Arial; background: #f4f4f9; padding: 20px; }
+    h2 { margin-bottom: 10px; }
+    select, input[type="text"] { margin-right: 10px; }
+    table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+    td, th { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    button { padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <h2>Enregistrer la présence des élèves</h2>
+
+  <label for="date">Date :</label>
+  <input type="date" id="date" />
+
+  <table>
+    <thead>
+      <tr>
+        <th>Élève</th>
+        <th>Statut</th>
+        <th>Commentaire (si justifié)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Alice</td>
+        <td>
+          <select data-name="Alice">
+            <option value="Présent">Présent</option>
+            <option value="Absent">Absent</option>
+            <option value="Justifié">Justifié</option>
+          </select>
+        </td>
+        <td><input type="text" data-comment="Alice" placeholder="ex : Malade" /></td>
+      </tr>
+      <tr>
+        <td>Bob</td>
+        <td>
+          <select data-name="Bob">
+            <option value="Présent">Présent</option>
+            <option value="Absent">Absent</option>
+            <option value="Justifié">Justifié</option>
+          </select>
+        </td>
+        <td><input type="text" data-comment="Bob" placeholder="ex : RDV médical" /></td>
+      </tr>
+      <tr>
+        <td>Charlie</td>
+        <td>
+          <select data-name="Charlie">
+            <option value="Présent">Présent</option>
+            <option value="Absent">Absent</option>
+            <option value="Justifié">Justifié</option>
+          </select>
+        </td>
+        <td><input type="text" data-comment="Charlie" placeholder="..." /></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <button onclick="enregistrerPresences()">Enregistrer</button>
+
+  <script>
+    function enregistrerPresences() {
+      const date = document.getElementById("date").value;
+      if (!date) return alert("Veuillez sélectionner une date");
+
+      let data = JSON.parse(localStorage.getItem("presences") || "[]");
+
+      const rows = document.querySelectorAll("tbody tr");
+
+      rows.forEach(row => {
+        const name = row.querySelector("select").getAttribute("data-name");
+        const statut = row.querySelector("select").value;
+        const comment = row.querySelector("input").value;
+
+        data.push({ date, eleve: name, statut, commentaire: comment });
+      });
+
+      localStorage.setItem("presences", JSON.stringify(data));
+      alert("Présences enregistrées !");
+    }
+  </script>
+</body>
+</html>
+
